@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2020 Obeo.
+ * Copyright (c) 2019, 2021 Obeo.
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  * Contributors:
  *     Obeo - initial API and implementation
  *******************************************************************************/
+import { httpOrigin } from 'common/URL';
 import {
-  createFeatureSet,
-  connectableFeature,
-  deletableFeature,
-  selectFeature,
   boundsFeature,
-  layoutContainerFeature,
+  connectableFeature,
+  createFeatureSet,
+  deletableFeature,
   fadeFeature,
   hoverFeedbackFeature,
+  layoutContainerFeature,
   popupFeature,
+  selectFeature,
   viewportFeature,
 } from 'sprotty';
 
@@ -74,6 +75,20 @@ const convertNode = (node) => {
     childNodes = node.childNodes.map((childNode) => convertNode(childNode));
   }
 
+  let convertedLabel;
+  if (label?.style?.iconURL !== undefined && label?.style?.iconURL !== '') {
+    convertedLabel = { ...label, style: { ...label.style, iconURL: httpOrigin + label.style.iconURL } };
+  } else {
+    convertedLabel = label;
+  }
+
+  let convertedStyle;
+  if (style?.imageURL !== undefined && style?.imageURL !== '') {
+    convertedStyle = { ...style, imageURL: httpOrigin + style.imageURL };
+  } else {
+    convertedStyle = style;
+  }
+
   return {
     id,
     type,
@@ -81,7 +96,7 @@ const convertNode = (node) => {
     targetObjectKind,
     targetObjectLabel,
     descriptionId,
-    style,
+    style: convertedStyle,
     size,
     position,
     features: createFeatureSet([
@@ -94,8 +109,8 @@ const convertNode = (node) => {
       hoverFeedbackFeature,
       popupFeature,
     ]),
-    editableLabel: label,
-    children: [label, ...borderNodes, ...childNodes],
+    editableLabel: convertedLabel,
+    children: [convertedLabel, ...borderNodes, ...childNodes],
   };
 };
 
@@ -118,13 +133,40 @@ const convertEdge = (edge) => {
 
   let children = [];
   if (beginLabel) {
-    children.push(beginLabel);
+    let convertedBeginLabel;
+    if (beginLabel?.style?.iconURL !== undefined && beginLabel?.style?.iconURL !== '') {
+      convertedBeginLabel = {
+        ...beginLabel,
+        style: { ...beginLabel.style, iconURL: httpOrigin + beginLabel.style.iconURL },
+      };
+    } else {
+      convertedBeginLabel = beginLabel;
+    }
+    children.push(convertedBeginLabel);
   }
   if (centerLabel) {
-    children.push(centerLabel);
+    let convertedCenterLabel;
+    if (centerLabel?.style?.iconURL !== undefined && centerLabel?.style?.iconURL !== '') {
+      convertedCenterLabel = {
+        ...centerLabel,
+        style: { ...centerLabel.style, iconURL: httpOrigin + centerLabel.style.iconURL },
+      };
+    } else {
+      convertedCenterLabel = centerLabel;
+    }
+    children.push(convertedCenterLabel);
   }
   if (endLabel) {
-    children.push(endLabel);
+    let convertedEndLabel;
+    if (endLabel?.style?.iconURL !== undefined && endLabel?.style?.iconURL !== '') {
+      convertedEndLabel = {
+        ...endLabel,
+        style: { ...endLabel.style, iconURL: httpOrigin + endLabel.style.iconURL },
+      };
+    } else {
+      convertedEndLabel = endLabel;
+    }
+    children.push(convertedEndLabel);
   }
 
   return {
