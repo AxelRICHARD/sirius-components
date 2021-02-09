@@ -10,7 +10,6 @@
  * Contributors:
  *     Obeo - initial API and implementation
  *******************************************************************************/
-import { httpOrigin } from 'common/URL';
 import {
   boundsFeature,
   connectableFeature,
@@ -33,10 +32,10 @@ import {
  * @param diagram the diagram object to convert
  * @return a Sprotty diagram object
  */
-export const convertDiagram = (diagram) => {
+export const convertDiagram = (diagram, httpOrigin) => {
   const { id, descriptionId, kind, targetObjectId, label, position, size } = diagram;
-  const nodes = diagram.nodes.map((node) => convertNode(node));
-  const edges = diagram.edges.map((edge) => convertEdge(edge));
+  const nodes = diagram.nodes.map((node) => convertNode(node, httpOrigin));
+  const edges = diagram.edges.map((edge) => convertEdge(edge, httpOrigin));
 
   return {
     id,
@@ -52,7 +51,7 @@ export const convertDiagram = (diagram) => {
   };
 };
 
-const convertNode = (node) => {
+const convertNode = (node, httpOrigin) => {
   const {
     id,
     type,
@@ -68,11 +67,11 @@ const convertNode = (node) => {
 
   let borderNodes = [];
   if (node.borderNodes) {
-    borderNodes = node.borderNodes.map((borderNode) => convertNode(borderNode));
+    borderNodes = node.borderNodes.map((borderNode) => convertNode(borderNode, httpOrigin));
   }
   let childNodes = [];
   if (node.childNodes) {
-    childNodes = node.childNodes.map((childNode) => convertNode(childNode));
+    childNodes = node.childNodes.map((childNode) => convertNode(childNode, httpOrigin));
   }
 
   let convertedLabel;
@@ -114,7 +113,7 @@ const convertNode = (node) => {
   };
 };
 
-const convertEdge = (edge) => {
+const convertEdge = (edge, httpOrigin) => {
   const {
     id,
     type,

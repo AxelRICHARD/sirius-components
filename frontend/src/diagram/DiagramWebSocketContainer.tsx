@@ -11,6 +11,7 @@
  *     Obeo - initial API and implementation
  *******************************************************************************/
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/client';
+import { ServerContext } from 'common/ServerContext';
 import { Text } from 'core/text/Text';
 import {
   COMPLETE__STATE,
@@ -44,7 +45,7 @@ import {
   ZOOM_TO_ACTION,
 } from 'diagram/sprotty/WebSocketDiagramServer';
 import { Toolbar } from 'diagram/Toolbar';
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useReducer, useRef } from 'react';
 import 'reflect-metadata'; // Required because Sprotty uses Inversify and both frameworks are written in TypeScript with experimental features.
 import { EditLabelAction, FitToScreenAction, SEdge, SNode } from 'sprotty';
 import { RepresentationComponentProps } from 'workbench/Workbench.types';
@@ -215,7 +216,7 @@ export const DiagramWebSocketContainer = ({
   setSelection,
 }: RepresentationComponentProps) => {
   const diagramDomElement = useRef(null);
-
+  const { httpOrigin } = useContext(ServerContext);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
@@ -417,6 +418,7 @@ export const DiagramWebSocketContainer = ({
         setActiveTool,
         toolSections,
         setContextualPalette,
+        httpOrigin,
       });
     }
   }, [
@@ -432,6 +434,7 @@ export const DiagramWebSocketContainer = ({
     editingContextId,
     representationId,
     readOnly,
+    httpOrigin,
   ]);
 
   useEffect(() => {

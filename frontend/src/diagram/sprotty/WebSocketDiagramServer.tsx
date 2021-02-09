@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2020 Obeo.
+ * Copyright (c) 2019, 2021 Obeo.
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,8 @@ export class SiriusWebWebSocketDiagramServer extends ModelSource {
   // Used to store the edge source element.
   diagramSourceElement;
   currentRoot: Root = INITIAL_ROOT;
+
+  httpOrigin;
 
   initialize(registry) {
     super.initialize(registry);
@@ -225,7 +227,7 @@ export class SiriusWebWebSocketDiagramServer extends ModelSource {
   handleSiriusUpdateModelAction(action) {
     const { diagram } = action;
     if (diagram) {
-      const convertedDiagram = convertDiagram(diagram);
+      const convertedDiagram = convertDiagram(diagram, this.httpOrigin);
       const sprottyModel = this.modelFactory.createRoot(convertedDiagram);
       this.actionDispatcher.request(GetSelectionAction.create()).then((selectionResult) => {
         sprottyModel.index
@@ -416,5 +418,9 @@ export class SiriusWebWebSocketDiagramServer extends ModelSource {
 
   setContextualPaletteListener(setContextualPalette) {
     this.setContextualPalette = setContextualPalette;
+  }
+
+  setHttpOrigin(httpOrigin) {
+    this.httpOrigin = httpOrigin;
   }
 }
